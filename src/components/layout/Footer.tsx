@@ -101,15 +101,18 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  to="/warranty"
+                  to="/warranty-info"
                   className="text-gray-600 hover:text-blue-700"
                 >
                   Warranty Info
                 </Link>
               </li>
               <li>
-                <Link to="/terms" className="text-gray-600 hover:text-blue-700">
-                  Terms of service
+                <Link
+                  to="/terms-of-service"
+                  className="text-gray-600 hover:text-blue-700"
+                >
+                  Terms of Service
                 </Link>
               </li>
               <li>

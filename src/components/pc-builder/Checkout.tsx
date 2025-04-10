@@ -41,11 +41,20 @@ export default function Checkout() {
     "credit",
   );
 
+  // Currency conversion rate (1 USD = 75 INR)
+  const usdToInr = 75;
+
   // Calculate totals
   const subtotal = orderSummary.reduce((sum, item) => sum + item.price, 0);
   const shippingCost = shippingMethod === "standard" ? 0 : 29.99;
-  const tax = subtotal * 0.08; // 8% tax
+  const tax = subtotal * 0.18; // 18% GST in India
   const total = subtotal + shippingCost + tax;
+
+  // Convert to INR
+  const subtotalInr = subtotal * usdToInr;
+  const shippingCostInr = shippingCost * usdToInr;
+  const taxInr = tax * usdToInr;
+  const totalInr = total * usdToInr;
 
   const handleContinue = () => {
     if (step === "shipping") setStep("payment");
@@ -375,7 +384,7 @@ export default function Checkout() {
                   <div key={index} className="flex justify-between text-sm">
                     <span className="text-gray-600">{item.name}</span>
                     <span className="text-blue-900 font-medium">
-                      ${item.price.toFixed(2)}
+                      ₹{(item.price * usdToInr).toFixed(2)}
                     </span>
                   </div>
                 ))}
@@ -387,7 +396,7 @@ export default function Checkout() {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal</span>
                   <span className="text-blue-900 font-medium">
-                    ${subtotal.toFixed(2)}
+                    ₹{subtotalInr.toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -395,13 +404,13 @@ export default function Checkout() {
                   <span className="text-blue-900 font-medium">
                     {shippingMethod === "standard"
                       ? "Free"
-                      : `$${shippingCost.toFixed(2)}`}
+                      : `₹${shippingCostInr.toFixed(2)}`}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Tax (8%)</span>
+                  <span className="text-gray-600">GST (18%)</span>
                   <span className="text-blue-900 font-medium">
-                    ${tax.toFixed(2)}
+                    ₹{taxInr.toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -413,7 +422,7 @@ export default function Checkout() {
                   Total
                 </span>
                 <span className="text-xl font-bold text-blue-900">
-                  ${total.toFixed(2)}
+                  ₹{totalInr.toFixed(2)}
                 </span>
               </div>
 

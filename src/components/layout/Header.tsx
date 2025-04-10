@@ -1,6 +1,13 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../../../supabase/auth";
+import { ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Header() {
   const { user } = useAuth();
@@ -13,7 +20,7 @@ export default function Header() {
             <h1 className="text-2xl font-bold text-blue-900">EliteBuilds</h1>
           </Link>
           <p className="ml-3 text-blue-700 hidden sm:block">
-            Build Your Dream PC
+            Crafted for Perfection
           </p>
         </div>
 
@@ -42,14 +49,39 @@ export default function Header() {
               Contact Us
             </Button>
           </Link>
-          <Link to="/blog">
-            <Button
-              variant="ghost"
-              className="text-blue-700 hover:text-blue-900 hover:bg-blue-50"
-            >
-              Blogs
-            </Button>
-          </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="text-blue-700 hover:text-blue-900 hover:bg-blue-50 flex items-center"
+              >
+                Resources
+                <ChevronDown className="ml-1 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem>
+                <Link to="/blog" className="w-full">
+                  Blogs
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link to="/faq" className="w-full">
+                  FAQ
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link to="/testimonials" className="w-full">
+                  Testimonials
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link to="/warranty-info" className="w-full">
+                  Warranty Info
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           {user ? (
             <Link to="/dashboard">
               <Button className="bg-blue-600 text-white hover:bg-blue-500">

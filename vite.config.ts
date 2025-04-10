@@ -12,9 +12,24 @@ if (process.env.TEMPO === "true") {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: process.env.NODE_ENV === "development" ? "/" : process.env.VITE_BASE_PATH || "/",
+  base:
+    process.env.NODE_ENV === "development"
+      ? "/"
+      : process.env.VITE_BASE_PATH || "/",
   optimizeDeps: {
-    entries: ["src/main.tsx", "src/tempobook/**/*"],
+    // Reduce the scope of dependency optimization
+    entries: ["src/main.tsx"],
+    esbuildOptions: {
+      // Disable tree shaking during dev to reduce memory usage
+      treeShaking: false,
+    },
+  },
+  build: {
+    // Reduce memory usage during build
+    minify: "esbuild",
+    // Limit the number of worker threads
+    reportCompressedSize: false,
+    chunkSizeWarningLimit: 1000,
   },
   plugins: [
     react({
@@ -31,5 +46,13 @@ export default defineConfig({
   server: {
     // @ts-ignore
     allowedHosts: true,
-  }
+    hmr: {
+      // Reduce memory usage for HMR
+      overlay: false,
+    },
+    // Limit the number of worker threads
+    fs: {
+      strict: false,
+    },
+  },
 });
