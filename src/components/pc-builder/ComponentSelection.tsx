@@ -265,6 +265,8 @@ const componentIcons: Record<ComponentType, React.ReactNode> = {
 };
 
 export default function ComponentSelection() {
+  // Currency conversion rate
+  const usdToInr = 75;
   const [selectedType, setSelectedType] = useState<ComponentType | null>("cpu");
   const [selectedComponents, setSelectedComponents] = useState<
     Record<ComponentType, Component | null>
@@ -399,7 +401,10 @@ export default function ComponentSelection() {
                                 {component.name}
                               </h3>
                               <span className="text-lg font-bold text-blue-700">
-                                ${component.price.toFixed(2)}
+                                ₹
+                                {(component.price * usdToInr).toLocaleString(
+                                  "en-IN",
+                                )}
                               </span>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -456,7 +461,7 @@ export default function ComponentSelection() {
                       </span>
                     </div>
                     <span className="text-sm text-blue-700">
-                      ${component.price.toFixed(2)}
+                      ₹{(component.price * usdToInr).toLocaleString("en-IN")}
                     </span>
                   </div>
                   <p className="mt-2 text-sm text-blue-900 truncate">
@@ -476,7 +481,7 @@ export default function ComponentSelection() {
                 {Object.values(selectedComponents).filter(Boolean).length}/8
               </p>
               <p className="text-2xl font-bold text-blue-900">
-                Total: ${totalPrice.toFixed(2)}
+                Total: ₹{(totalPrice * usdToInr).toLocaleString("en-IN")}
               </p>
             </div>
 

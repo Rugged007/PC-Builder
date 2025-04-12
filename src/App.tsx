@@ -13,6 +13,11 @@ import Documentation from "./components/pages/Documentation";
 import Tutorials from "./components/pages/Tutorials";
 import Blog from "./components/pages/Blog";
 import Support from "./components/pages/Support";
+import FAQ from "./components/pages/FAQ";
+import Testimonials from "./components/pages/Testimonials";
+import WarrantyInfo from "./components/pages/WarrantyInfo";
+import AboutUs from "./components/pages/AboutUs";
+import ContactUs from "./components/pages/ContactUs";
 import { AuthProvider, useAuth } from "../supabase/auth";
 import { Toaster } from "./components/ui/toaster";
 import Layout from "./components/layout/Layout";
@@ -112,6 +117,46 @@ function AppRoutes() {
           element={
             <Layout>
               <Support />
+            </Layout>
+          }
+        />
+        <Route
+          path="/faq"
+          element={
+            <Layout>
+              <FAQ />
+            </Layout>
+          }
+        />
+        <Route
+          path="/testimonials"
+          element={
+            <Layout>
+              <Testimonials />
+            </Layout>
+          }
+        />
+        <Route
+          path="/warranty-info"
+          element={
+            <Layout>
+              <WarrantyInfo />
+            </Layout>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <Layout>
+              <AboutUs />
+            </Layout>
+          }
+        />
+        <Route
+          path="/contact"
+          element={
+            <Layout>
+              <ContactUs />
             </Layout>
           }
         />

@@ -62,12 +62,15 @@ const pcDetails = {
   ],
   inStock: true,
   shipping: "Free shipping (3-5 business days)",
-  expressShipping: "Express shipping available (+$49.99)",
+  expressShipping: "Express shipping available (+₹3,749)",
 };
 
 export default function PCDetails() {
   const [mainImage, setMainImage] = useState(pcDetails.images[0]);
   const [quantity, setQuantity] = useState(1);
+
+  // Currency conversion rate (1 USD = 75 INR)
+  const usdToInr = 75;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-8">
@@ -154,14 +157,15 @@ export default function PCDetails() {
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-3xl font-bold text-blue-900">
-                    ${pcDetails.price.toFixed(2)}
+                    ₹{(pcDetails.price * usdToInr).toLocaleString("en-IN")}
                   </span>
                   <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200 border-none">
-                    Save $300
+                    Save ₹22,500
                   </Badge>
                 </div>
                 <p className="text-gray-600 text-sm">
-                  or from $208/month with financing
+                  or from ₹{(208 * usdToInr).toLocaleString("en-IN")}/month with
+                  financing
                 </p>
               </div>
 
@@ -545,7 +549,8 @@ export default function PCDetails() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="font-bold text-blue-900">
-                      ${(1499 + item * 300).toFixed(2)}
+                      ₹
+                      {((1499 + item * 300) * usdToInr).toLocaleString("en-IN")}
                     </span>
                     <Button
                       size="sm"

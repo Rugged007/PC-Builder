@@ -136,6 +136,8 @@ const preBuiltPCs: PreBuiltPC[] = [
 ];
 
 export default function PreBuiltPCs() {
+  // Currency conversion rate
+  const usdToInr = 75;
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<PCCategory[]>(
     [],
@@ -270,8 +272,12 @@ export default function PreBuiltPCs() {
                   </h3>
                   <div className="space-y-4">
                     <div className="flex justify-between text-sm text-gray-600">
-                      <span>${priceRange[0]}</span>
-                      <span>${priceRange[1]}</span>
+                      <span>
+                        ₹{(priceRange[0] * usdToInr).toLocaleString("en-IN")}
+                      </span>
+                      <span>
+                        ₹{(priceRange[1] * usdToInr).toLocaleString("en-IN")}
+                      </span>
                     </div>
                     <input
                       type="range"
@@ -392,10 +398,11 @@ export default function PreBuiltPCs() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-2xl font-bold text-blue-900">
-                        $3,499.99
+                        ₹{(3499.99 * usdToInr).toLocaleString("en-IN")}
                       </span>
                       <span className="text-sm text-gray-500">
-                        or $292/mo with financing
+                        or ₹{(292 * usdToInr).toLocaleString("en-IN")}/mo with
+                        financing
                       </span>
                     </div>
                   </div>
@@ -505,15 +512,18 @@ export default function PreBuiltPCs() {
                         {pc.discount ? (
                           <div className="flex items-center gap-2">
                             <span className="text-lg font-bold text-blue-900">
-                              ${getDiscountedPrice(pc).toFixed(2)}
+                              ₹
+                              {(
+                                getDiscountedPrice(pc) * usdToInr
+                              ).toLocaleString("en-IN")}
                             </span>
                             <span className="text-sm text-gray-500 line-through">
-                              ${pc.price.toFixed(2)}
+                              ₹{(pc.price * usdToInr).toLocaleString("en-IN")}
                             </span>
                           </div>
                         ) : (
                           <span className="text-lg font-bold text-blue-900">
-                            ${pc.price.toFixed(2)}
+                            ₹{(pc.price * usdToInr).toLocaleString("en-IN")}
                           </span>
                         )}
                       </div>
