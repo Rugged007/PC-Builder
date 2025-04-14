@@ -173,25 +173,91 @@ export default function Header() {
           )}
         </nav>
 
-        <Button
-          variant="ghost"
-          className="md:hidden text-blue-700 hover:text-blue-900 hover:bg-blue-50"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 6h16M4 12h16M4 18h16"
-            />
-          </svg>
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="md:hidden text-blue-700 hover:text-blue-900 hover:bg-blue-50"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56 md:hidden">
+            <DropdownMenuItem>
+              <Link to="/component-selection" className="w-full">
+                Solutions
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link to="/about" className="w-full">
+                About Us
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link to="/contact" className="w-full">
+                Contact Us
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link to="/blog" className="w-full">
+                Blogs
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link to="/faq" className="w-full">
+                FAQ
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link to="/testimonials" className="w-full">
+                Testimonials
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link to="/warranty-info" className="w-full">
+                Warranty Info
+              </Link>
+            </DropdownMenuItem>
+            {user ? (
+              <>
+                <DropdownMenuItem>
+                  <Link to="/profile" className="w-full">
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => supabase.auth.signOut()}>
+                  <div className="w-full text-red-600">Logout</div>
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <>
+                <DropdownMenuItem>
+                  <Link to="/login" className="w-full">
+                    Login
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link to="/signup" className="w-full">
+                    Register
+                  </Link>
+                </DropdownMenuItem>
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

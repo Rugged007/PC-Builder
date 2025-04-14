@@ -18,6 +18,7 @@ import Testimonials from "./components/pages/Testimonials";
 import WarrantyInfo from "./components/pages/WarrantyInfo";
 import AboutUs from "./components/pages/AboutUs";
 import ContactUs from "./components/pages/ContactUs";
+import Profile from "./components/pages/Profile";
 import { AuthProvider, useAuth } from "../supabase/auth";
 import { Toaster } from "./components/ui/toaster";
 import Layout from "./components/layout/Layout";
@@ -166,6 +167,16 @@ function AppRoutes() {
             <PrivateRoute>
               <Layout>
                 <Dashboard />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Profile />
               </Layout>
             </PrivateRoute>
           }
