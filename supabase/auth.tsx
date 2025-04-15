@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string) => {
-    const { error } = await supabase.auth.signUp({
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -44,7 +44,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
       },
     });
-    if (error) throw error;
+
+    if (authError) throw authError;
+
+    // The database trigger will handle creating the user profile
+    // But we'll also try to create it manually as a fallback
+    if (authData?.user) {
+      try {
+        const { error: profileError } = await supabase.from("users").upsert({
+          id: authData.user.id,
+          email: email,
+          full_name: fullName,
+          preferences: {},
+        });
+
+        if (profileError) {
+          console.error(
+            "Error creating user profile (fallback):",
+            profileError,
+          );
+        }
+      } catch (err) {
+        console.error("Error in user profile creation:", err);
+        // Continue even if this fails, as the trigger should handle it
+      }
+    }
   };
 
   const signIn = async (email: string, password: string) => {

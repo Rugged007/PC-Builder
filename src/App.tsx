@@ -9,6 +9,7 @@ import PCBuilderLightMode from "./components/pc-builder/PCBuilderLightMode";
 import PCDetails from "./components/pc-builder/PCDetails";
 import ComponentSelection from "./components/pc-builder/ComponentSelection";
 import PreBuiltPCs from "./components/pc-builder/PreBuiltPCs";
+import Checkout from "./components/pc-builder/Checkout";
 import Documentation from "./components/pages/Documentation";
 import Tutorials from "./components/pages/Tutorials";
 import Blog from "./components/pages/Blog";
@@ -19,6 +20,7 @@ import WarrantyInfo from "./components/pages/WarrantyInfo";
 import AboutUs from "./components/pages/AboutUs";
 import ContactUs from "./components/pages/ContactUs";
 import Profile from "./components/pages/Profile";
+import SavedBuilds from "./components/pages/SavedBuilds";
 import { AuthProvider, useAuth } from "../supabase/auth";
 import { Toaster } from "./components/ui/toaster";
 import Layout from "./components/layout/Layout";
@@ -41,6 +43,14 @@ function AppRoutes() {
   return (
     <>
       <Routes>
+        <Route
+          path="/checkout"
+          element={
+            <Layout>
+              <Checkout />
+            </Layout>
+          }
+        />
         <Route
           path="/"
           element={
@@ -177,6 +187,16 @@ function AppRoutes() {
             <PrivateRoute>
               <Layout>
                 <Profile />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/saved-builds"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <SavedBuilds />
               </Layout>
             </PrivateRoute>
           }

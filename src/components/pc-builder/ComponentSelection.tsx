@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowLeft,
   Cpu,
@@ -9,11 +9,27 @@ import {
   Fan,
   Power,
   Box,
+  Save,
+  AlertCircle,
+  CheckCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../supabase/auth";
+import { supabase } from "../../../supabase/supabase";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 // Define component types
 type ComponentType =
@@ -267,6 +283,9 @@ const componentIcons: Record<ComponentType, React.ReactNode> = {
 export default function ComponentSelection() {
   // Currency conversion rate
   const usdToInr = 75;
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState<ComponentType | null>("cpu");
   const [selectedComponents, setSelectedComponents] = useState<
     Record<ComponentType, Component | null>
@@ -280,6 +299,12 @@ export default function ComponentSelection() {
     psu: null,
     case: null,
   });
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const [buildName, setBuildName] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">(
+    "idle",
+  );
 
   // Calculate total price
   const totalPrice = Object.values(selectedComponents)
@@ -292,6 +317,76 @@ export default function ComponentSelection() {
       ...prev,
       [component.type]: component,
     }));
+  };
+
+  // Save build to database
+  const saveBuild = async () => {
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please login to save your build",
+        variant: "destructive",
+      });
+      navigate("/login");
+      return;
+    }
+
+    if (!buildName.trim()) {
+      toast({
+        title: "Build Name Required",
+        description: "Please enter a name for your build",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveStatus("idle");
+
+    try {
+      const { error } = await supabase.from("saved_builds").insert({
+        user_id: user.id,
+        name: buildName,
+        components: selectedComponents,
+        total_price: totalPrice,
+      });
+
+      if (error) throw error;
+
+      setSaveStatus("success");
+      toast({
+        title: "Build Saved",
+        description: "Your build has been saved successfully",
+      });
+
+      // Close dialog after a short delay
+      setTimeout(() => {
+        setSaveDialogOpen(false);
+        setBuildName("");
+        setSaveStatus("idle");
+      }, 1500);
+    } catch (error) {
+      console.error("Error saving build:", error);
+      setSaveStatus("error");
+      toast({
+        title: "Error",
+        description: "Failed to save your build. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Handle proceed to checkout
+  const handleProceedToCheckout = () => {
+    // Store selected components in localStorage for checkout page
+    localStorage.setItem(
+      "selectedComponents",
+      JSON.stringify(selectedComponents),
+    );
+    localStorage.setItem("totalPrice", totalPrice.toString());
+    navigate("/checkout");
   };
 
   return (
@@ -489,24 +584,78 @@ export default function ComponentSelection() {
               <Button
                 variant="outline"
                 className="border-blue-400 text-blue-700 hover:border-blue-500 hover:bg-blue-50"
+                onClick={() => setSaveDialogOpen(true)}
               >
+                <Save className="mr-2 h-4 w-4" />
                 Save Build
               </Button>
-              <Link to="/checkout">
-                <Button
-                  className="bg-blue-600 text-white hover:bg-blue-500"
-                  disabled={
-                    Object.values(selectedComponents).filter(Boolean).length < 8
-                  }
-                >
-                  Proceed to Checkout
-                  <ArrowLeft className="ml-2 h-4 w-4 rotate-180" />
-                </Button>
-              </Link>
+              <Button
+                className="bg-blue-600 text-white hover:bg-blue-500"
+                disabled={
+                  Object.values(selectedComponents).filter(Boolean).length < 8
+                }
+                onClick={handleProceedToCheckout}
+              >
+                Proceed to Checkout
+                <ArrowLeft className="ml-2 h-4 w-4 rotate-180" />
+              </Button>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Save Build Dialog */}
+      <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Save Your PC Build</DialogTitle>
+            <DialogDescription>
+              Give your build a name to save it to your profile.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="buildName" className="text-right">
+                Build Name
+              </Label>
+              <Input
+                id="buildName"
+                value={buildName}
+                onChange={(e) => setBuildName(e.target.value)}
+                className="col-span-3"
+                placeholder="My Gaming PC"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            {saveStatus === "success" && (
+              <div className="flex items-center gap-2 text-green-600 mr-auto">
+                <CheckCircle className="h-5 w-5" />
+                <span>Build saved successfully!</span>
+              </div>
+            )}
+            {saveStatus === "error" && (
+              <div className="flex items-center gap-2 text-red-600 mr-auto">
+                <AlertCircle className="h-5 w-5" />
+                <span>Failed to save build</span>
+              </div>
+            )}
+            <Button variant="outline" onClick={() => setSaveDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={saveBuild} disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                  Saving...
+                </>
+              ) : (
+                "Save Build"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

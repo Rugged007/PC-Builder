@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ArrowLeft,
   CreditCard,
@@ -18,8 +18,8 @@ interface OrderSummaryItem {
   price: number;
 }
 
-// Sample order summary data
-const orderSummary: OrderSummaryItem[] = [
+// Default order summary data (fallback if no localStorage data)
+const defaultOrderSummary: OrderSummaryItem[] = [
   { name: "Intel Core i9-13900K", price: 599.99 },
   { name: "NVIDIA RTX 4090 24GB", price: 1599.99 },
   { name: "ASUS ROG Maximus Z790 Hero", price: 629.99 },
@@ -40,9 +40,38 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState<"credit" | "paypal">(
     "credit",
   );
+  const [orderSummary, setOrderSummary] =
+    useState<OrderSummaryItem[]>(defaultOrderSummary);
 
   // Currency conversion rate (1 USD = 75 INR)
   const usdToInr = 75;
+
+  // Load selected components from localStorage
+  useEffect(() => {
+    try {
+      const storedComponents = localStorage.getItem("selectedComponents");
+      if (storedComponents) {
+        const components = JSON.parse(storedComponents);
+        const items: OrderSummaryItem[] = [];
+
+        // Convert components object to order summary items
+        Object.values(components).forEach((component: any) => {
+          if (component) {
+            items.push({
+              name: component.name,
+              price: component.price,
+            });
+          }
+        });
+
+        if (items.length > 0) {
+          setOrderSummary(items);
+        }
+      }
+    } catch (error) {
+      console.error("Error loading components from localStorage:", error);
+    }
+  }, []);
 
   // Calculate totals
   const subtotal = orderSummary.reduce((sum, item) => sum + item.price, 0);
