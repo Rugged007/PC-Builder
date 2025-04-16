@@ -5,10 +5,8 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
       <div className="max-w-md w-full px-4">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold">Project Management</h1>
-          <p className="text-slate-600 mt-2">
-            Manage your projects and tasks efficiently
-          </p>
+          <h1 className="text-3xl font-bold"></h1>
+          <p className="text-slate-600 mt-2"></p>
         </div>
         {children}
       </div>
